@@ -7,6 +7,7 @@ import { Done, Undo, FileCopy } from "@material-ui/icons";
 import { SharedDialogButton } from "./SharedDialogButton";
 
 interface ImportCsvDialogStrategyProps {
+  title: string,
   disableImportOverwrite: boolean;
   resourceName: string;
   fileName: string;
@@ -23,6 +24,7 @@ interface ImportCsvDialogStrategyProps {
 interface MessageState {
   title: string;
   subTitle: string;
+  importStatus: string;
   loadingTxt: string;
   labelSkip: string;
   labelReplace: string;
@@ -32,6 +34,7 @@ interface MessageState {
 
 export const ImportCsvDialogStrategy = (props: ImportCsvDialogStrategyProps) => {
   const {
+    title,
     count,
     disableImportOverwrite,
     resourceName,
@@ -50,12 +53,15 @@ export const ImportCsvDialogStrategy = (props: ImportCsvDialogStrategyProps) => 
   useEffect(() => {
     setMessages({
       title: translate("csv.dialogImport.title", {
-        resource: resourceName,
+        resource: title,
       }),
       subTitle: translate("csv.dialogCommon.subtitle", {
         count: count,
         fileName: fileName,
         resource: resourceName,
+      }),
+      importStatus: translate("csv.dialogCommon.importStatus", {
+        completed: count
       }),
       loadingTxt: translate("csv.loading"),
       labelSkip: translate("csv.dialogImport.buttons.skipAllConflicts"),
@@ -66,7 +72,7 @@ export const ImportCsvDialogStrategy = (props: ImportCsvDialogStrategyProps) => 
         conflictingCount: idsConflicting && idsConflicting.length,
       }),
     });
-  }, [count, resourceName, fileName, idsConflicting]);
+  }, [count, resourceName, fileName, idsConflicting, title]);
 
   return (
     <SharedDialogWrapper

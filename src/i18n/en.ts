@@ -12,7 +12,8 @@ export default {
       invalidCsv: 'The documnent could not be parsed as a "csv" file',
     },
     dialogCommon: {
-      subtitle: 'Importing %{count} items from %{fileName} to "%{resource}"',
+      subtitle: 'Importing %{count} items from %{fileName} to %{resource}',
+      importStatus: 'Progress: %{compleyed} items imported successfully. %{failed} failed.',
       conflictCount:
       "The resource <strong>%{resource}</strong> has <strong>%{conflictingCount}</strong> more records with conflicting ids",
       buttons: {
@@ -21,7 +22,7 @@ export default {
     },
     dialogImport: {
       alertClose: "Imported %{fname}",
-      title: 'Importing to "%{resource}"',
+      title: 'Importing %{resource}',
       buttons: {
         replaceAllConflicts: "Replace the rows",
         skipAllConflicts: "Skip these rows",

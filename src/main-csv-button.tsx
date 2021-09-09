@@ -32,7 +32,7 @@ export const MainCsvImport = (props: any) => {
   const disableOverwrite = !!disableImportOverwrite;
 
   const logging = !!props.logging;
-  let { variant, label, resource, resourceName } = props;
+  let { variant, label, resource, resourceName, title } = props;
   const logger = new SimpleLogger("import-csv-button", true);
   logger.setEnabled(logging);
 
@@ -144,11 +144,17 @@ export const MainCsvImport = (props: any) => {
   }
 
   async function createRows(vals: any[]) {
+
+    const handleChange = () => {
+      console.log("batch change")
+    }
+
     return create(
       logging,
       dataProvider,
       resourceName,
       vals,
+      handleChange,
       preCommitCallback,
       postCommitCallback
     );
@@ -178,7 +184,7 @@ export const MainCsvImport = (props: any) => {
 
   const notify = useNotify();
   const handleClose = () => {
-    console.log("handleClose", { file });
+    logger.log("handleClose", { file });
     resetVars();
     notify(translate("csv.dialogImport.alertClose", { fname: fileName }));
     refresh();
@@ -272,6 +278,7 @@ export const MainCsvImport = (props: any) => {
 
       {/* IMPORT DIALOG */}
       <ImportCsvDialogStrategy
+        title={title}
         disableImportOverwrite={disableOverwrite}
         resourceName={resourceName}
         fileName={fileName}

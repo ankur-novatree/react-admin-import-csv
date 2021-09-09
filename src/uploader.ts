@@ -9,6 +9,7 @@ export async function create(
   dataProvider: DataProvider,
   resource: string,
   values: any[],
+  handleChange: Function,
   preCommitCallback?: PrecommitCallback,
   postCommitCallback?: ErrorCallback
 ) {
@@ -19,7 +20,8 @@ export async function create(
     logging,
     dataProvider,
     resource,
-    parsedValues
+    parsedValues,
+    handleChange
   );
   if (postCommitCallback) {
     postCommitCallback(reportItems);
@@ -69,17 +71,34 @@ async function createInDataProvider(
   logging: boolean,
   dataProvider: DataProvider,
   resource: string,
-  values: any[]
+  values: any[],
+  handleChange: Function
 ): Promise<ReportItem[]> {
   logger.setEnabled(logging);
   logger.log("createInDataProvider", { dataProvider, resource, values });
   const reportItems: ReportItem[] = [];
   try {
-    const response = await dataProvider.createMany(resource, { data: values });
-    reportItems.push({
-      value: null, success: true, response: response
-    })
+
+    // Fized batch size for now. Can be made configurable in future.
+    let batchSize = 10;
+    
+    let batch = 1;
+    for (let i = 0;  i < values.length; i += batchSize) {
+      try {
+        const response = await dataProvider.createMany(resource, { data: values.slice(i, i + batchSize) });
+        reportItems.push({
+          value: null, success: true, response: response
+        })
+      } catch(err) {
+        
+      }
+      console.log("Batch No ", batch)
+      batch++;
+      handleChange()
+    }
+    console.log("ankur", reportItems)
   } catch (error) {
+    console.log("here")
     const shouldTryFallback = error.toString().includes("Unknown dataProvider");
     const apiError = !shouldTryFallback;
     if (apiError) {
