@@ -53,6 +53,10 @@ export const ImportCsvDialogEachItem = (props: ImportCsvDialogEachItemProps) => 
         fileName: fileName,
         resource: resourceName,
       })}
+      importStatus={''}
+      importCompleted={''}
+      completed={false}
+      failedItems={[]}
       open={openAskDecide}
       handleClose={handleClose}
     >
