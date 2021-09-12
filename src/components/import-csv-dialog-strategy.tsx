@@ -63,7 +63,7 @@ export const ImportCsvDialogStrategy = (props: ImportCsvDialogStrategyProps) => 
   useEffect(() => {
     setMessages({
       title: translate("csv.dialogImport.title", {
-        resource: title,
+        resource: resourceName,
       }),
       subTitle: translate("csv.dialogCommon.subtitle", {
         count: count,

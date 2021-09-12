@@ -51,7 +51,7 @@ export function SharedDialogWrapper(props: {
            {props.completed ? props.importCompleted : props.importStatus}
           </p>
           {props.failedItems != undefined && props.failedItems.length > 0 ? 
-            <p
+            <div
               style={{
                 fontFamily: "sans-serif",
                 margin: "0",
@@ -61,8 +61,8 @@ export function SharedDialogWrapper(props: {
               }}
             >
             Failed Items:
-            {props.failedItems.map(item => <p>{item.errorMessage + " : "+JSON.stringify(item.data)}</p> )}
-            </p>
+            {props.failedItems.map((item, index) => <p key={index}>{item.errorMessage + " : "+JSON.stringify(item.data)}</p> )}
+            </div>
           : ''}
           {props.children}
         </div>

@@ -1,6 +1,6 @@
 {
   "name": "@ankur_novatree/react-admin-import-csv",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CSV import button for react-admin",
   "repository": {
     "type": "git",
