@@ -13,7 +13,8 @@ export default {
     },
     dialogCommon: {
       subtitle: 'Importing %{count} items from %{fileName} to %{resource}',
-      importStatus: 'Progress: %{compleyed} items imported successfully. %{failed} failed.',
+      importStatus: 'Progress: %{success} items imported successfully. %{failed} failed.',
+      importCompleted: 'Import Completed: %{success} items imported successfully. %{failed} failed.',
       conflictCount:
       "The resource <strong>%{resource}</strong> has <strong>%{conflictingCount}</strong> more records with conflicting ids",
       buttons: {

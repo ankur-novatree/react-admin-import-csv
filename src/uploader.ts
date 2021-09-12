@@ -9,7 +9,7 @@ export async function create(
   dataProvider: DataProvider,
   resource: string,
   values: any[],
-  handleChange: Function,
+  handleProgressUpdate: Function,
   preCommitCallback?: PrecommitCallback,
   postCommitCallback?: ErrorCallback
 ) {
@@ -21,7 +21,7 @@ export async function create(
     dataProvider,
     resource,
     parsedValues,
-    handleChange
+    handleProgressUpdate
   );
   if (postCommitCallback) {
     postCommitCallback(reportItems);
@@ -72,7 +72,7 @@ async function createInDataProvider(
   dataProvider: DataProvider,
   resource: string,
   values: any[],
-  handleChange: Function
+  handleProgressUpdate: Function
 ): Promise<ReportItem[]> {
   logger.setEnabled(logging);
   logger.log("createInDataProvider", { dataProvider, resource, values });
@@ -82,23 +82,34 @@ async function createInDataProvider(
     // Fized batch size for now. Can be made configurable in future.
     let batchSize = 10;
     
-    let batch = 1;
+    let success = 0;
+    let failure = 0;
+    const failedItems: any[] = [];
     for (let i = 0;  i < values.length; i += batchSize) {
       try {
         const response = await dataProvider.createMany(resource, { data: values.slice(i, i + batchSize) });
-        reportItems.push({
-          value: null, success: true, response: response
-        })
+        if("data" in response) {
+          response.data.forEach((item, index) => {
+            if(item.success === true) {
+              success++;
+            } else {
+              failure++;
+              failedItems.push({ data: values[i+index], errorMessage: item.errorMessage })
+            }
+          })
+        } else {
+          throw 'Unknown server error'
+        }
       } catch(err) {
-        
+        values.slice(i, i + batchSize).forEach(item => {
+          failure++;
+          failedItems.push({ data: item, errorMessage: err.message });
+        })
       }
-      console.log("Batch No ", batch)
-      batch++;
-      handleChange()
+      handleProgressUpdate({success: success, failure: failure, failedItems: failedItems, completed: false})
     }
-    console.log("ankur", reportItems)
+    handleProgressUpdate({success: success, failure: failure, failedItems: failedItems, completed: true})
   } catch (error) {
-    console.log("here")
     const shouldTryFallback = error.toString().includes("Unknown dataProvider");
     const apiError = !shouldTryFallback;
     if (apiError) {

@@ -1,5 +1,5 @@
 import React from "react";
-import { useRefresh, useNotify, useDataProvider } from "react-admin";
+import { useRefresh, useDataProvider } from "react-admin";
 
 import { ImportConfig } from "./config.interface";
 import { SimpleLogger } from "./SimpleLogger";
@@ -58,12 +58,14 @@ export const MainCsvImport = (props: any) => {
   const [idsConflicting, setIdsConflicting] = React.useState([] as any[]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [currentValue, setCurrentValue] = React.useState(null as any);
+  const [mounted, setMounted] = React.useState(false);
+  const [progress, setProgress] = React.useState({success: 0, failure: 0, failedItems: [], completed: false})
 
   const [file, setFile] = React.useState<File | null>();
   const fileName = (file && file.name) + "";
 
   React.useEffect(() => {
-    let mounted = true;
+    setMounted(true);
     if (!file) {
       setOpen(false);
       return;
@@ -120,16 +122,13 @@ export const MainCsvImport = (props: any) => {
     processCSV()
       .then(async ([csvItems, hasCollidingIds]) => {
         await createRows(csvItems);
-        mounted && !hasCollidingIds && handleClose();
+        setMounted(false)
       })
       .catch((error) => {
         mounted && resetVars();
         logger.error(error);
       });
 
-    return () => {
-      mounted = false;
-    };
   }, [file]);
 
   let refInput: HTMLInputElement;
@@ -145,8 +144,8 @@ export const MainCsvImport = (props: any) => {
 
   async function createRows(vals: any[]) {
 
-    const handleChange = () => {
-      console.log("batch change")
+    const handleProgressUpdate = (update) => {
+      setProgress(update);
     }
 
     return create(
@@ -154,7 +153,7 @@ export const MainCsvImport = (props: any) => {
       dataProvider,
       resourceName,
       vals,
-      handleChange,
+      handleProgressUpdate,
       preCommitCallback,
       postCommitCallback
     );
@@ -182,12 +181,12 @@ export const MainCsvImport = (props: any) => {
     setFile(file);
   };
 
-  const notify = useNotify();
   const handleClose = () => {
-    logger.log("handleClose", { file });
-    resetVars();
-    notify(translate("csv.dialogImport.alertClose", { fname: fileName }));
-    refresh();
+    if(!mounted) {
+      logger.log("handleClose", { file });
+      resetVars();
+      refresh();
+    }
   };
 
   const handleReplace = async () => {
@@ -290,6 +289,7 @@ export const MainCsvImport = (props: any) => {
         open={open}
         isLoading={isLoading}
         idsConflicting={idsConflicting}
+        progress={progress}
       />
       {/* IMPORT ASK DECIDE */}
       <ImportCsvDialogEachItem

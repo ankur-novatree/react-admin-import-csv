@@ -6,6 +6,13 @@ import { List } from "@material-ui/core";
 import { Done, Undo, FileCopy } from "@material-ui/icons";
 import { SharedDialogButton } from "./SharedDialogButton";
 
+interface ImportProgress {
+  success: number;
+  failure: number;
+  failedItems: any[];
+  completed: boolean;
+}
+
 interface ImportCsvDialogStrategyProps {
   title: string,
   disableImportOverwrite: boolean;
@@ -19,12 +26,14 @@ interface ImportCsvDialogStrategyProps {
   open: boolean;
   isLoading: boolean;
   idsConflicting: string[];
+  progress: ImportProgress;
 }
 
 interface MessageState {
   title: string;
   subTitle: string;
   importStatus: string;
+  importCompleted: string;
   loadingTxt: string;
   labelSkip: string;
   labelReplace: string;
@@ -46,6 +55,7 @@ export const ImportCsvDialogStrategy = (props: ImportCsvDialogStrategyProps) => 
     open,
     isLoading,
     idsConflicting,
+    progress
   } = props;
   const [messages, setMessages] = React.useState({} as MessageState);
   const translate = translateWrapper();
@@ -61,7 +71,12 @@ export const ImportCsvDialogStrategy = (props: ImportCsvDialogStrategyProps) => 
         resource: resourceName,
       }),
       importStatus: translate("csv.dialogCommon.importStatus", {
-        completed: count
+        success: progress.success,
+        failed: progress.failure
+      }),
+      importCompleted: translate("csv.dialogCommon.importCompleted", {
+        success: progress.success,
+        failed: progress.failure
       }),
       loadingTxt: translate("csv.loading"),
       labelSkip: translate("csv.dialogImport.buttons.skipAllConflicts"),
@@ -72,7 +87,7 @@ export const ImportCsvDialogStrategy = (props: ImportCsvDialogStrategyProps) => 
         conflictingCount: idsConflicting && idsConflicting.length,
       }),
     });
-  }, [count, resourceName, fileName, idsConflicting, title]);
+  }, [count, resourceName, fileName, idsConflicting, title, progress]);
 
   return (
     <SharedDialogWrapper
@@ -80,6 +95,10 @@ export const ImportCsvDialogStrategy = (props: ImportCsvDialogStrategyProps) => 
       subTitle={messages.subTitle}
       open={open}
       handleClose={handleClose}
+      importStatus={messages.importStatus}
+      importCompleted={messages.importCompleted}
+      completed={progress.completed}
+      failedItems={progress.failedItems}
     >
       {isLoading && <SharedLoader loadingTxt={messages.loadingTxt}></SharedLoader>}
       {idsConflicting && idsConflicting.length > 0 && !isLoading && (
