@@ -32,7 +32,7 @@ const ListActions = (props) => {
     exporter,
   } = props;
   const config = {
-    logging: true,
+    logging: false,
     validateRow: async (row) => {
       if (row.id) {
         // throw new Error("AAAA");
@@ -60,10 +60,10 @@ const ListActions = (props) => {
 };
 
 export const PostList = (props) => (
-  <List {...props} actions={<ListActions />}>
+  <List {...props} title="Business Associates" actions={<ListActions title="Business Associates" />}>
     <Datagrid>
       <TextField source="id" />
-      <TextField source="title" />
+      <TextField source="name" />
       <ShowButton label="" />
       <EditButton label="" />
       <DeleteButton label="" redirect={false} />

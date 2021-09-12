@@ -1,9 +1,12 @@
 {
-  "name": "react-admin-import-csv",
-  "version": "1.0.0",
+  "name": "@ankur_novatree/react-admin-import-csv",
+  "version": "1.0.2",
   "description": "CSV import button for react-admin",
-  "repository": "https://github.com/benwinding/react-admin-import-csv",
-  "homepage": "https://github.com/benwinding/react-admin-import-csv",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankur-novatree/react-admin-import-csv.git"
+  },
+  "homepage": "https://github.com/ankur-novatree/react-admin-import-csv",
   "author": "Ben Winding",
   "license": "MIT",
   "private": false,
@@ -54,5 +57,11 @@
     "source-map-loader": "^0.2.4",
     "ts-jest": "^24.x.x",
     "typescript": "3.x"
+  },
+  "bugs": {
+    "url": "https://github.com/ankur-novatree/react-admin-import-csv/issues"
+  },
+  "directories": {
+    "lib": "lib"
   }
 }
