@@ -108,7 +108,9 @@ async function createInDataProvider(
       }
       handleProgressUpdate({success: success, failure: failure, failedItems: failedItems, completed: false})
     }
-    handleProgressUpdate({success: success, failure: failure, failedItems: failedItems, completed: true})
+    if(values.length > 0) {
+      handleProgressUpdate({success: success, failure: failure, failedItems: failedItems, completed: true})
+    }
   } catch (error) {
     const shouldTryFallback = error.toString().includes("Unknown dataProvider");
     const apiError = !shouldTryFallback;
